@@ -19,6 +19,24 @@ export const AuthProvider = ({ children }) => {
         loadUser();
     }, []);
 
+    const signup = async (
+        fullName,
+        email,
+        username,
+        password,
+        confirmPassword
+    ) => {
+        const res = await axios.post("/auth/signup", {
+            fullName,
+            email,
+            username,
+            password,
+            confirmPassword,
+        });
+        // setUser(res.data);
+        // await AsyncStorage.setItem("user", JSON.stringify(res.data));
+    };
+
     const login = async (username, password) => {
         const res = await axios.post("/auth/login", { username, password });
         setUser(res.data);
