@@ -3,6 +3,7 @@ import axios from "../utils/api";
 
 export const useConversationStore = create((set) => ({
     conversations: [],
+    setConversations: (conversations) => set({ conversations }),
     loading: false,
 
     fetchConversations: async () => {

@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { TextInput, Button, Card, Text } from "react-native-paper";
 
 import { useMessageStore } from "../stores/useMessageStore";
 import { useAuthStore } from "../stores/useAuthStore";
+import useListenMessages from "../utils/useListenMessages";
 
 export default function ChatScreen({ route }) {
     const { user } = useAuthStore();
@@ -11,6 +12,9 @@ export default function ChatScreen({ route }) {
     const { messages, fetchMessages, sendMessage, clearMessages } =
         useMessageStore();
     const [text, setText] = useState("");
+    const flatListRef = useRef(null);
+
+    useListenMessages();
 
     useEffect(() => {
         fetchMessages(otherUser._id);
@@ -23,6 +27,12 @@ export default function ChatScreen({ route }) {
             setText(""); // Clear the input after sending
         }
     };
+
+    useEffect(() => {
+        if (flatListRef.current && messages.length > 0) {
+            flatListRef.current.scrollToEnd({ animated: true });
+        }
+    }, [messages]);
 
     const renderItem = ({ item }) => {
         const isMyMessage = item.senderId === user._id;
@@ -45,8 +55,9 @@ export default function ChatScreen({ route }) {
     return (
         <View style={styles.container}>
             <FlatList
+                ref={flatListRef}
                 data={messages}
-                keyExtractor={(item) => item._id}
+                keyExtractor={(item, index) => item._id || index.toString()}
                 renderItem={renderItem}
                 contentContainerStyle={{ paddingVertical: 10 }}
             />

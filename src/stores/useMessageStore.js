@@ -3,6 +3,10 @@ import axios from "../utils/api";
 
 export const useMessageStore = create((set) => ({
     messages: [],
+    addMessage: (message) =>
+        set((state) => ({
+            messages: [...state.messages, message],
+        })),
     loading: false,
 
     fetchMessages: async (otherUserId) => {

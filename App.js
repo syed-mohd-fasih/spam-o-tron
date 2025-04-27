@@ -7,6 +7,7 @@ import { useAuthStore } from "./src/stores/useAuthStore";
 
 import AppNavigator from "./src/navigation/AppNavigator";
 import GlobalSnackbar from "./src/components/GlobalSnackbar";
+import { SocketContextProvider } from "./src/context/SocketContext";
 
 export default function App() {
     const { isDarkTheme } = useThemeStore();
@@ -29,11 +30,13 @@ export default function App() {
     }
 
     return (
-        <PaperProvider theme={theme}>
-            <NavigationContainer>
-                <AppNavigator />
-            </NavigationContainer>
-            <GlobalSnackbar />
-        </PaperProvider>
+        <SocketContextProvider>
+            <PaperProvider theme={theme}>
+                <NavigationContainer>
+                    <AppNavigator />
+                </NavigationContainer>
+                <GlobalSnackbar />
+            </PaperProvider>
+        </SocketContextProvider>
     );
 }
