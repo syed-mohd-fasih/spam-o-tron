@@ -1,7 +1,6 @@
-import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useContext } from "react";
-import { AuthContext } from "../contexts/AuthContext";
+
+import { useAuthStore } from "../stores/useAuthStore";
 
 import SplashScreen from "../screens/SplashScreen";
 import LoginScreen from "../screens/LoginScreen";
@@ -13,7 +12,7 @@ import SettingsScreen from "../screens/SettingsScreen";
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
-    const { user, loading } = useContext(AuthContext);
+    const { user } = useAuthStore();
 
     if (loading) return <SplashScreen />;
 

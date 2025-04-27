@@ -1,7 +1,9 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { View } from "react-native";
 import { TextInput, Button, Snackbar } from "react-native-paper";
-import { AuthContext } from "../contexts/AuthContext";
+
+import { useAuthStore } from "../stores/useAuthStore";
+import { useSnackbarStore } from "../stores/useSnackbarStore";
 
 export default function SignupScreen({ navigation }) {
     const [fullName, setFullName] = useState("");
@@ -9,33 +11,33 @@ export default function SignupScreen({ navigation }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const { signup } = useContext(AuthContext);
 
-    const [snackbarVisible, setSnackbarVisible] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const signup = useAuthStore((state) => state.signup);
+
+    const { showSnackbar } = useSnackbarStore();
 
     const handleSignup = () => {
         if (!fullName || !email || !username || !password || !confirmPassword) {
-            showToast("Please fill in all fields!");
+            showSnackbar("Please fill in all fields!");
             return;
         }
 
         if (password.length < 6) {
-            showToast("Password must be at least 6 characters long!");
+            showSnackbar("Password must be at least 6 characters long!");
             return;
         }
 
         if (password !== confirmPassword) {
-            showToast("Passwords do not match!");
+            showSnackbar("Passwords do not match!");
             return;
         }
 
-        signup(username, password, fullName, email);
-    };
-
-    const showToast = (message) => {
-        setSnackbarMessage(message);
-        setSnackbarVisible(true);
+        const success = signup(username, password, fullName, email);
+        if (success) {
+            navigation.navigate("Home");
+        } else {
+            showSnackbar("Signup failed! Please try again.");
+        }
     };
 
     return (

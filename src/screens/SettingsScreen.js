@@ -1,11 +1,10 @@
-import { useContext } from "react";
 import { View } from "react-native";
 import { Switch, Text } from "react-native-paper";
-import { ThemeContext } from "../contexts/ThemeContext";
+
+import { useThemeStore } from "../stores/useThemeStore";
 
 export default function SettingsScreen() {
-    const { isDarkTheme, toggleTheme } = useContext(ThemeContext);
-
+    const { isDarkTheme, toggleTheme } = useThemeStore();
     return (
         <View style={{ padding: 20 }}>
             <Text>Dark Theme</Text>

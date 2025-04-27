@@ -1,40 +1,26 @@
-import { useEffect, useState, useContext, useRef } from "react";
+import { useEffect, useState } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { TextInput, Button, Card, Text } from "react-native-paper";
-import axios from "../utils/api";
-import { AuthContext } from "../contexts/AuthContext";
+
+import { useMessageStore } from "../stores/useMessageStore";
+import { useAuthStore } from "../stores/useAuthStore";
 
 export default function ChatScreen({ route }) {
-    const { user } = useContext(AuthContext);
+    const { user } = useAuthStore();
     const { user: otherUser } = route.params;
-    const [messages, setMessages] = useState([]);
+    const { messages, fetchMessages, sendMessage, clearMessages } =
+        useMessageStore();
     const [text, setText] = useState("");
 
     useEffect(() => {
-        fetchMessages();
-    }, []);
+        fetchMessages(otherUser._id);
+        return () => clearMessages();
+    });
 
-    const fetchMessages = async () => {
-        try {
-            const res = await axios.get(`/messages/${otherUser._id}`);
-            setMessages(res.data);
-        } catch (error) {
-            console.error("Error fetching messages: ", error.message);
-        }
-    };
-
-    const sendMessage = async () => {
-        if (text.trim() === "") return; // prevent empty messages
-        try {
-            const res = await axios.post(`/messages/send/${otherUser._id}`, {
-                message: text,
-            });
-
-            // Optimistically add the new message to the list
-            setMessages((prev) => [...prev, res.data]);
-            setText("");
-        } catch (error) {
-            console.error("Error sending message: ", error.message);
+    const handleSend = async () => {
+        if (text.trim()) {
+            await sendMessage(otherUser._id, text);
+            setText(""); // Clear the input after sending
         }
     };
 
@@ -73,7 +59,7 @@ export default function ChatScreen({ route }) {
                     style={styles.textInput}
                 />
                 <Button
-                    onPress={sendMessage}
+                    onPress={handleSend}
                     mode="contained"
                     style={styles.sendButton}
                 >

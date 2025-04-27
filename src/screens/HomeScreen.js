@@ -1,31 +1,23 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect } from "react";
 import { View, FlatList } from "react-native";
-import { AuthContext } from "../contexts/AuthContext";
 import { Avatar, List, IconButton } from "react-native-paper";
-import axios from "../utils/api";
+
+import { useConversationStore } from "../stores/useConversationStore";
+import { useAuthStore } from "../stores/useAuthStore";
 
 export default function HomeScreen({ navigation }) {
-    const [users, setUsers] = useState([]);
-    const { logout } = useContext(AuthContext);
+    const { conversations, fetchConversations, loading } =
+        useConversationStore();
+    const logout = useAuthStore((state) => state.logout);
 
     useEffect(() => {
-        const getConversations = async () => {
-            try {
-                const res = await axios
-                    .get("/users")
-                    .then((res) => setUsers(res.data));
-            } catch (error) {
-                alert("Error fetching users: ", error);
-            }
-        };
-
-        getConversations();
-    }, []);
+        fetchConversations();
+    });
 
     return (
         <View style={{ flex: 1 }}>
             <FlatList
-                data={users}
+                data={conversations}
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => (
                     <List.Item

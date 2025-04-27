@@ -1,24 +1,23 @@
+import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { AuthProvider } from "./src/contexts/AuthContext";
-import { ThemeProvider, ThemeContext } from "./src/contexts/ThemeContext";
+import { PaperProvider, DarkTheme, DefaultTheme } from "react-native-paper";
+
+import { useThemeStore } from "./src/stores/useThemeStore";
+
 import AppNavigator from "./src/navigation/AppNavigator";
-import { useContext } from "react";
+
+import GlobalSnackbar from "./src/components/GlobalSnackbar";
 
 export default function App() {
-    return (
-        <AuthProvider>
-            <ThemeProviderWrapper />
-        </AuthProvider>
-    );
-}
+    const { isDarkTheme } = useThemeStore();
+    const theme = isDarkTheme ? DarkTheme : DefaultTheme;
 
-const ThemeProviderWrapper = () => {
-    const { theme } = useContext(ThemeContext) || {};
     return (
-        <ThemeProvider>
-            <NavigationContainer theme={theme}>
+        <PaperProvider theme={theme}>
+            <NavigationContainer>
                 <AppNavigator />
             </NavigationContainer>
-        </ThemeProvider>
+            <GlobalSnackbar />
+        </PaperProvider>
     );
-};
+}

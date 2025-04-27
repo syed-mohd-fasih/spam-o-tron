@@ -1,28 +1,30 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { View } from "react-native";
 import { TextInput, Button, Snackbar } from "react-native-paper";
-import { AuthContext } from "../contexts/AuthContext";
+
+import { useAuthStore } from "../stores/useAuthStore";
+import { useSnackbarStore } from "../stores/useSnackbarStore";
 
 export default function LoginScreen({ navigation }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const { login } = useContext(AuthContext);
 
-    const [snackbarVisible, setSnackbarVisible] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const { showSnackbar } = useSnackbarStore();
+
+    const login = useAuthStore((state) => state.login);
 
     const handleLogin = () => {
         if (!username || !password) {
-            showToast("Please fill in all fields!");
+            showSnackbar("Please fill in all fields!");
             return;
         }
 
-        login(username, password);
-    };
-
-    const showToast = (message) => {
-        setSnackbarMessage(message);
-        setSnackbarVisible(true);
+        const success = login(username, password);
+        if (success) {
+            navigation.navigate("Home");
+        } else {
+            showSnackbar("Login failed! Please try again.");
+        }
     };
 
     return (
