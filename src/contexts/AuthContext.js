@@ -26,27 +26,53 @@ export const AuthProvider = ({ children }) => {
         password,
         confirmPassword
     ) => {
-        const res = await axios.post("/auth/signup", {
-            fullName,
-            email,
-            username,
-            password,
-            confirmPassword,
-        });
-        // setUser(res.data);
-        // await AsyncStorage.setItem("user", JSON.stringify(res.data));
+        try {
+            const res = await axios.post("/auth/signup", {
+                fullName,
+                email,
+                username,
+                password,
+                confirmPassword,
+            });
+
+            const data = await res.data;
+
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            await AsyncStorage.setItem("user", JSON.stringify(res.data));
+            setUser(res.data);
+        } catch (error) {
+            alert("Error", error.response.data.message);
+        }
     };
 
     const login = async (username, password) => {
-        const res = await axios.post("/auth/login", { username, password });
-        setUser(res.data);
-        await AsyncStorage.setItem("user", JSON.stringify(res.data));
+        try {
+            const res = await axios.post("/auth/login", { username, password });
+
+            const data = await res.data;
+
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            await AsyncStorage.setItem("user", JSON.stringify(res.data));
+            setUser(res.data);
+        } catch (error) {
+            alert("Error", error.response.data.message);
+        }
     };
 
     const logout = async () => {
-        await axios.post("/auth/logout");
-        setUser(null);
-        await AsyncStorage.removeItem("user");
+        try {
+            await axios.post("/auth/logout");
+            await AsyncStorage.removeItem("user");
+            setUser(null);
+        } catch (error) {
+            alert("Error", error.response.data.message);
+        }
     };
 
     return (

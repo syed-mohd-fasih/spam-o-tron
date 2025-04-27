@@ -9,7 +9,17 @@ export default function HomeScreen({ navigation }) {
     const { logout } = useContext(AuthContext);
 
     useEffect(() => {
-        axios.get("/users").then((res) => setUsers(res.data));
+        const getConversations = async () => {
+            try {
+                const res = await axios
+                    .get("/users")
+                    .then((res) => setUsers(res.data));
+            } catch (error) {
+                alert("Error fetching users: ", error);
+            }
+        };
+
+        getConversations();
     }, []);
 
     return (
@@ -34,6 +44,7 @@ export default function HomeScreen({ navigation }) {
                 )}
             />
             <IconButton icon="logout" onPress={logout} />
+            {/* <IconButton icon="cog" onPress={navigation.navigate("Settings")} /> */}
         </View>
     );
 }

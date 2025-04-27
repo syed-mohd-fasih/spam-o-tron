@@ -1,5 +1,9 @@
 import { createContext, useState } from "react";
-import { DarkTheme, DefaultTheme } from "react-native-paper";
+import {
+    DarkTheme as PaperDarkTheme,
+    DefaultTheme as PaperDefaultTheme,
+    Provider as PaperProvider,
+} from "react-native-paper";
 
 export const ThemeContext = createContext();
 
@@ -7,14 +11,14 @@ export const ThemeProvider = ({ children }) => {
     const [isDarkTheme, setIsDarkTheme] = useState(false);
 
     const toggleTheme = () => {
-        setIsDarkTheme(!isDarkTheme);
+        setIsDarkTheme((prev) => !prev);
     };
 
-    const theme = isDarkTheme ? DarkTheme : DefaultTheme;
+    const theme = isDarkTheme ? PaperDarkTheme : PaperDefaultTheme;
 
     return (
-        <ThemeContext.Provider value={{ isDarkTheme, toggleTheme, theme }}>
-            {children}
+        <ThemeContext.Provider value={{ isDarkTheme, toggleTheme }}>
+            <PaperProvider theme={theme}>{children}</PaperProvider>
         </ThemeContext.Provider>
     );
 };

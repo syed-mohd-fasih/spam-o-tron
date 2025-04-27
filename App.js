@@ -1,4 +1,3 @@
-import { PaperProvider } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import { AuthProvider } from "./src/contexts/AuthContext";
 import { ThemeProvider, ThemeContext } from "./src/contexts/ThemeContext";
@@ -17,11 +16,9 @@ const ThemeProviderWrapper = () => {
     const { theme } = useContext(ThemeContext) || {};
     return (
         <ThemeProvider>
-            <PaperProvider theme={theme}>
-                <NavigationContainer theme={theme}>
-                    <AppNavigator />
-                </NavigationContainer>
-            </PaperProvider>
+            <NavigationContainer theme={theme}>
+                <AppNavigator />
+            </NavigationContainer>
         </ThemeProvider>
     );
 };
