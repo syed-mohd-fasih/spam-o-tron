@@ -2,7 +2,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { useAuthStore } from "../stores/useAuthStore";
 
-import SplashScreen from "../screens/SplashScreen";
 import LoginScreen from "../screens/LoginScreen";
 import SignupScreen from "../screens/SignupScreen";
 import HomeScreen from "../screens/HomeScreen";
@@ -13,8 +12,6 @@ const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
     const { user } = useAuthStore();
-
-    if (loading) return <SplashScreen />;
 
     return (
         <Stack.Navigator>

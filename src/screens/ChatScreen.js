@@ -15,7 +15,7 @@ export default function ChatScreen({ route }) {
     useEffect(() => {
         fetchMessages(otherUser._id);
         return () => clearMessages();
-    });
+    }, [otherUser._id, fetchMessages, clearMessages]);
 
     const handleSend = async () => {
         if (text.trim()) {

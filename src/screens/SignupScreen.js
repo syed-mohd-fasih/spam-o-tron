@@ -34,7 +34,7 @@ export default function SignupScreen({ navigation }) {
 
         const success = signup(username, password, fullName, email);
         if (success) {
-            navigation.navigate("Home");
+            showSnackbar("Signup success!");
         } else {
             showSnackbar("Signup failed! Please try again.");
         }
@@ -84,18 +84,6 @@ export default function SignupScreen({ navigation }) {
             <Button onPress={() => navigation.navigate("Login")}>
                 Already have an account? Login
             </Button>
-
-            <Snackbar
-                visible={snackbarVisible}
-                onDismiss={() => setSnackbarVisible(false)}
-                duration={3000} // 3 seconds
-                action={{
-                    label: "Dismiss",
-                    onPress: () => setSnackbarVisible(false),
-                }}
-            >
-                {snackbarMessage}
-            </Snackbar>
         </View>
     );
 }

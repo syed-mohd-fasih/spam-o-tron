@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import axios from "../utils/api";
 
 export const useConversationStore = create((set) => ({

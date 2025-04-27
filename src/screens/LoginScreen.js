@@ -21,7 +21,7 @@ export default function LoginScreen({ navigation }) {
 
         const success = login(username, password);
         if (success) {
-            navigation.navigate("Home");
+            showSnackbar("Login success!");
         } else {
             showSnackbar("Login failed! Please try again.");
         }
@@ -46,17 +46,6 @@ export default function LoginScreen({ navigation }) {
             <Button onPress={() => navigation.navigate("Signup")}>
                 Don't have an account? Sign up
             </Button>
-            <Snackbar
-                visible={snackbarVisible}
-                onDismiss={() => setSnackbarVisible(false)}
-                duration={3000} // 3 seconds
-                action={{
-                    label: "Dismiss",
-                    onPress: () => setSnackbarVisible(false),
-                }}
-            >
-                {snackbarMessage}
-            </Snackbar>
         </View>
     );
 }

@@ -12,7 +12,7 @@ export default function HomeScreen({ navigation }) {
 
     useEffect(() => {
         fetchConversations();
-    });
+    }, []);
 
     return (
         <View style={{ flex: 1 }}>
@@ -36,7 +36,12 @@ export default function HomeScreen({ navigation }) {
                 )}
             />
             <IconButton icon="logout" onPress={logout} />
-            {/* <IconButton icon="cog" onPress={navigation.navigate("Settings")} /> */}
+            <IconButton
+                icon="cog"
+                onPress={() => {
+                    navigation.navigate("Settings");
+                }}
+            />
         </View>
     );
 }

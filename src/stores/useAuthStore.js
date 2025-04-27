@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import axios from "../utils/api";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -48,6 +48,17 @@ export const useAuthStore = create((set) => ({
             set({ user: null });
         } catch (error) {
             console.error("Error logging out:", error.message);
+        }
+    },
+
+    restoreUser: async () => {
+        try {
+            const userData = await AsyncStorage.getItem("user");
+            if (userData) {
+                set({ user: JSON.parse(userData) });
+            }
+        } catch (error) {
+            console.error("Failed to restore user:", error);
         }
     },
 }));
