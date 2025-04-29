@@ -1,15 +1,23 @@
 import { useEffect, useState, useRef } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
-import { TextInput, Button, Card, Text } from "react-native-paper";
+import {
+    TextInput,
+    Button,
+    Card,
+    Text,
+    ActivityIndicator,
+    useTheme,
+} from "react-native-paper";
 
 import { useMessageStore } from "../stores/useMessageStore";
 import { useAuthStore } from "../stores/useAuthStore";
 import useListenMessages from "../utils/useListenMessages";
 
-export default function ChatScreen({ route }) {
+export default function ChatScreen({ route, navigation }) {
+    const theme = useTheme();
     const { user } = useAuthStore();
     const { user: otherUser } = route.params;
-    const { messages, fetchMessages, sendMessage, clearMessages } =
+    const { messages, fetchMessages, sendMessage, clearMessages, loading } =
         useMessageStore();
     const [text, setText] = useState("");
     const flatListRef = useRef(null);
@@ -18,13 +26,22 @@ export default function ChatScreen({ route }) {
 
     useEffect(() => {
         fetchMessages(otherUser._id);
+        navigation.setOptions({ title: otherUser.username });
         return () => clearMessages();
     }, [otherUser._id, fetchMessages, clearMessages]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            if (flatListRef.current) {
+                flatListRef.current.scrollToEnd({ animated: true });
+            }
+        }, 500);
+    }, [loading, messages]);
 
     const handleSend = async () => {
         if (text.trim()) {
             await sendMessage(otherUser._id, text);
-            setText(""); // Clear the input after sending
+            setText("");
         }
     };
 
@@ -40,27 +57,47 @@ export default function ChatScreen({ route }) {
             <Card
                 style={[
                     styles.messageCard,
-                    isMyMessage ? styles.myMessage : styles.theirMessage,
+                    {
+                        alignSelf: isMyMessage ? "flex-end" : "flex-start",
+                        backgroundColor: isMyMessage
+                            ? theme.colors.primaryContainer
+                            : theme.colors.surfaceVariant,
+                    },
                 ]}
             >
                 <Card.Content>
-                    <Text>{item.message}</Text>
-                    {/* Optional: Show timestamp later if you want */}
-                    {/* <Text variant="labelSmall">{new Date(item.createdAt).toLocaleTimeString()}</Text> */}
+                    <Text style={{ color: theme.colors.onSurface }}>
+                        {item.message}
+                    </Text>
                 </Card.Content>
             </Card>
         );
     };
 
     return (
-        <View style={styles.container}>
-            <FlatList
-                ref={flatListRef}
-                data={messages}
-                keyExtractor={(item, index) => item._id || index.toString()}
-                renderItem={renderItem}
-                contentContainerStyle={{ paddingVertical: 10 }}
-            />
+        <View
+            style={[
+                styles.container,
+                { backgroundColor: theme.colors.background },
+            ]}
+        >
+            {loading ? (
+                <ActivityIndicator
+                    style={{
+                        padding: 10,
+                    }}
+                    animating={true}
+                    size={"large"}
+                />
+            ) : (
+                <FlatList
+                    ref={flatListRef}
+                    data={messages}
+                    keyExtractor={(item, index) => item._id || index.toString()}
+                    renderItem={renderItem}
+                    contentContainerStyle={{ padding: 10 }}
+                />
+            )}
             <View style={styles.inputContainer}>
                 <TextInput
                     value={text}
@@ -68,11 +105,15 @@ export default function ChatScreen({ route }) {
                     placeholder="Type a message..."
                     mode="outlined"
                     style={styles.textInput}
+                    placeholderTextColor={theme.colors.onSurfaceVariant}
+                    contentStyle={{ paddingVertical: 8 }} // Better vertical padding inside input
                 />
                 <Button
                     onPress={handleSend}
                     mode="contained"
                     style={styles.sendButton}
+                    contentStyle={styles.sendButtonContent}
+                    labelStyle={styles.sendButtonLabel}
                 >
                     Send
                 </Button>
@@ -89,24 +130,26 @@ const styles = StyleSheet.create({
         margin: 5,
         maxWidth: "70%",
     },
-    myMessage: {
-        alignSelf: "flex-end",
-        backgroundColor: "#DCF8C5", // Light green for sent messages
-    },
-    theirMessage: {
-        alignSelf: "flex-start",
-        backgroundColor: "#FFFFFF", // White for received messages
-    },
     inputContainer: {
         flexDirection: "row",
         padding: 10,
         alignItems: "center",
+        borderTopWidth: 1,
     },
     textInput: {
         flex: 1,
-        marginRight: 10,
+        marginRight: 8,
+        // borderRadius: 40,
     },
     sendButton: {
-        alignSelf: "center",
+        borderRadius: 20,
+    },
+    sendButtonContent: {
+        paddingHorizontal: 6,
+        paddingVertical: 6,
+    },
+    sendButtonLabel: {
+        fontSize: 14,
+        fontWeight: "bold",
     },
 });
