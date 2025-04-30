@@ -37,16 +37,27 @@ export default function HomeScreen({ navigation }) {
                     return (
                         <List.Item
                             title={item.fullName}
-                            description={
-                                item.username +
-                                (isOnline ? " (Online)" : " (Offline)")
-                            }
+                            description={item.username}
                             left={() => (
                                 <Avatar.Image
                                     size={48}
                                     source={{ uri: item.profilePic }}
                                 />
                             )}
+                            right={() =>
+                                isOnline ? (
+                                    <View
+                                        style={{
+                                            width: 15,
+                                            height: 15,
+                                            borderRadius: 8,
+                                            backgroundColor: "green",
+                                            marginRight: 10,
+                                            alignSelf: "center",
+                                        }}
+                                    />
+                                ) : null
+                            }
                             onPress={() =>
                                 navigation.navigate("Chat", { user: item })
                             }
